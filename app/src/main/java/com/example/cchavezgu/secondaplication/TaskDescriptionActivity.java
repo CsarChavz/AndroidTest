@@ -18,7 +18,7 @@ public class TaskDescriptionActivity extends AppCompatActivity {
     public void doneClicked(View view) {
         // 1
         EditText descriptionText = (EditText) findViewById(R.id.descriptionText);
-        String taskDescription =   descriptionText.text.toString();
+        String taskDescription =   descriptionText.getText().toString();
 
         if (!taskDescription.isEmpty()) {
         // 2
