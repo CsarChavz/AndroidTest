@@ -1,15 +1,21 @@
 package com.example.cchavezgu.secondaplication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,17 +56,24 @@ public class MainActivity extends AppCompatActivity {
         sentenceList = (ListView) findViewById(R.id.taskListView);
         sentenceList.setAdapter(itemsAdapter);
 
+        sentenceList.setOnItemClickListener( new AdapterView.OnItemClickListener()
+        {
+            public void onItemClick(AdapterView<?> adapterView , View view , int position ,long arg3)
+            {
+                taskSelected(position);
+            }
+        });
+
         String savedList = getSharedPreferences(PREFS_TASKS, Context.MODE_PRIVATE).getString(KEY_TASKS_LIST, null);
         if (savedList != null) {
-            ArrayList<String> items = savedList.split(",").toString(). dropLastWhile { it.isEmpty() }.toTypedArray();
+            String[] items = savedList.split(",");
             int index = 0;
             for (String task : items) {
-                if (task.equals("")){
-                    items.get(index). ;
+                if (!task.equals("")){
+                    taskList1.add(items[index]);
                 }
                 index++;
             }
-            taskList1.addAll(items);
         }
     }
     @Override
@@ -112,6 +125,10 @@ public class MainActivity extends AppCompatActivity {
         getSharedPreferences(PREFS_TASKS, Context.MODE_PRIVATE).edit()
                 .putString(KEY_TASKS_LIST, savedList.toString()).apply();
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+    }
 
     //ACTION SECTION
     public void addTaskClicked(View view) {
@@ -137,5 +154,35 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         Date now = new Date();
         return simpleDateFormat.format(now);
+    }
+    private void taskSelected(final int position) {
+        // 1
+        new AlertDialog.Builder(this)
+                // 2
+                .setTitle(R.string.alert_title)
+                // 3
+                .setMessage(taskList1.get(position))
+                .setNegativeButton(
+                        R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                .setPositiveButton(
+                        R.string.delete,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                taskList1.remove(position);
+                                itemsAdapter.notifyDataSetChanged();
+                            }
+                        })
+                // 4
+                .create()
+                // 5
+                .show();
     }
 }
