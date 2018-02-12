@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         ListView sentenceList;
         sentenceList = (ListView) findViewById(R.id.taskListView);
         sentenceList.setAdapter(itemsAdapter);
-
+        
         sentenceList.setOnItemClickListener( new AdapterView.OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> adapterView , View view , int position ,long arg3)
